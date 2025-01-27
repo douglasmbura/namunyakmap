@@ -9,20 +9,16 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
-  <!-- jQuery and PapaParse Libraries -->
-  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
-
   <!-- Custom Styles for Map and Navbar -->
   <style>
-    body { margin: 10; padding: 10; }
+    body { margin: 0; padding: 0; }
     #map { position: absolute; top: 50px; bottom: 0; right: 0; left: 0; }
     
     /* Navbar styles */
     .navbar {
       position: fixed;
       top: 0;
-      left: 10;
+      left: 0;
       width: 100%;
       height: 60px;
       background-color: #595959;
@@ -73,7 +69,7 @@
     // Google Satellite Basemap
     var googleSatellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
       subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-      maxZoom: 50,
+      maxZoom: 20,
       attribution: '&copy; <a href="https://www.google.com/maps">Google Maps</a>'
     }).addTo(map);
 
@@ -83,28 +79,36 @@
       audio.play();
     }
 
-    // Load CSV data and display on the map
-    $.get('./data.csv', function(csvString) {
-      var data = Papa.parse(csvString, { header: true, dynamicTyping: true }).data;
-      data.forEach(function(row) {
-        if (row.Latitude && row.Longitude && row['Event Title'] && row.Date && row.Audio && row.Photo && row.Marker) {
-          var customIcon = L.icon({
-            iconUrl: row.Marker,
-            iconSize: [30, 30],
-            iconAnchor: [15, 30],
-            popupAnchor: [0, -30]
-          });
-          var marker = L.marker([row.Latitude, row.Longitude], { icon: customIcon }).addTo(map);
-          marker.bindPopup(`
-            <div class="popup-content">
-              <b>Event Title:</b> ${row['Event Title']}<br>
-              <b>Date:</b> ${row.Date}<br>
-              <img src="${row.Photo}"}"><br>
-              <button onclick="playAudio('${row.Audio}')">Play Audio</button>
-            </div>
-          `);
-        }
+    // Add points directly from the CSV data
+    var points = [
+      { title: "Siemoi Borehole", lat: 1.103842, lng: 37.512000, date: "1/20/25", audio: "", photo: "assets/photos/stables.jpg", marker: "assets/markers/borehole.png" },
+      { title: "Koitaga Borehole", lat: 1.102197, lng: 37.514025, date: "1/20/25", audio: "", photo: "assets/photos/stables.jpg", marker: "assets/markers/borehole.png" },
+      { title: "Leitemu Borehole 1", lat: 1.099400, lng: 37.522257, date: "1/20/25", audio: "", photo: "assets/photos/stables.jpg", marker: "assets/markers/borehole.png" },
+      { title: "Leitemu Borehole 2", lat: 1.103328, lng: 37.525706, date: "1/20/25", audio: "", photo: "assets/photos/stables.jpg", marker: "assets/markers/borehole.png" },
+      { title: "Lolkonoi Singing Wells", lat: 1.106975, lng: 37.529596, date: "1/20/25", audio: "assets/sounds/elephant-rampaging.wav", photo: "assets/photos/stables.jpg", marker: "assets/markers/well.png" },
+      {title: "Leitemu Singing Wells ", lat: 1.108968, lng: 37.539404, date: "1/20/25", audio: "assets/sounds/elephant-rampaging.wav", photo: "assets/photos/stables.jpg", marker: "assets/markers/well.png" },
+      {title: "Sereolipi Market", lat: 1.12604011, lng: 37.59907, date: "1/20/25", audio: "assets/sounds/elephant-rampaging.wav", photo: "assets/photos/sereolipi.jpg", marker: "assets/markers/market.png" },
+      {title: "Sereolipi Health Center", lat: 1.128991, lng: 37.602068, date: "1/20/25", audio: "assets/sounds/elephant-rampaging.wav", photo: "assets/photos/health.jpg", marker: "assets/markers/health.png" }
+
+    ];
+
+    points.forEach(function(row) {
+      var customIcon = L.icon({
+        iconUrl: row.marker,
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -30]
       });
+
+      var marker = L.marker([row.lat, row.lng], { icon: customIcon }).addTo(map);
+      marker.bindPopup(`
+        <div class="popup-content">
+          <b>Event Title:</b> ${row.title}<br>
+          <b>Date:</b> ${row.date}<br>
+          <img src="${row.photo}"><br>
+          ${row.audio ? `<button onclick="playAudio('${row.audio}')">Play Audio</button>` : ''}
+        </div>
+      `);
     });
 
     // Set attribution
