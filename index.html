@@ -84,28 +84,68 @@
     }
 
     // Load CSV data and display on the map
-    $.get('./data.csv', function(csvString) {
-      var data = Papa.parse(csvString, { header: true, dynamicTyping: true }).data;
-      data.forEach(function(row) {
-        if (row.Latitude && row.Longitude && row['Event Title'] && row.Date && row.Audio && row.Photo && row.Marker) {
-          var customIcon = L.icon({
-            iconUrl: row.Marker,
-            iconSize: [30, 30],
-            iconAnchor: [15, 30],
-            popupAnchor: [0, -30]
-          });
-          var marker = L.marker([row.Latitude, row.Longitude], { icon: customIcon }).addTo(map);
-          marker.bindPopup(`
-            <div class="popup-content">
-              <b>Event Title:</b> ${row['Event Title']}<br>
-              <b>Date:</b> ${row.Date}<br>
-              <img src="${row.Photo}"}"><br>
-              <button onclick="playAudio('${row.Audio}')">Play Audio</button>
-            </div>
-          `);
+    <script>
+  // Load CSV data and display all points on the map
+  $.get('./data.csv', function(csvString) {
+    // Parse CSV data
+    var data = Papa.parse(csvString, { header: true, dynamicTyping: true }).data;
+
+    // Iterate through each row in the parsed data
+    data.forEach(function(row, index) {
+      // Validate essential fields: Latitude and Longitude
+      if (row.Latitude && row.Longitude) {
+        // Use fallback/default values for missing optional fields
+        var eventTitle = row['Event Title'] || `Event ${index + 1}`;
+        var date = row.Date || 'Date not provided';
+        var audio = row.Audio || null;
+        var photo = row.Photo || null;
+        var markerIcon = row.Marker || 'default-marker.png'; // Replace with your default marker image
+
+        // Create a custom icon for the marker
+        var customIcon = L.icon({
+          iconUrl: markerIcon,
+          iconSize: [30, 30],
+          iconAnchor: [15, 30],
+          popupAnchor: [0, -30]
+        });
+
+        // Add a marker to the map
+        var marker = L.marker([row.Latitude, row.Longitude], { icon: customIcon }).addTo(map);
+
+        // Prepare the popup content
+        var popupContent = `
+          <div class="popup-content">
+            <b>Event Title:</b> ${eventTitle}<br>
+            <b>Date:</b> ${date}<br>
+        `;
+
+        // Add photo to the popup if available
+        if (photo) {
+          popupContent += `<img src="${photo}" alt="Event Photo" style="width: 100px; height: auto;"><br>`;
         }
-      });
+
+        // Add audio play button to the popup if available
+        if (audio) {
+          popupContent += `<button onclick="playAudio('${audio}')">Play Audio</button>`;
+        }
+
+        popupContent += `</div>`;
+
+        // Bind popup to the marker
+        marker.bindPopup(popupContent);
+      } else {
+        console.warn(`Row ${index + 1} has missing or invalid Latitude/Longitude:`, row);
+      }
     });
+  });
+
+  // Function to play audio
+  function playAudio(audioURL) {
+    const audio = new Audio(audioURL);
+    audio.play();
+  }
+</script>
+
 
     // Set attribution
     map.attributionControl.setPrefix(
