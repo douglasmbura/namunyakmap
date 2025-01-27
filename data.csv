@@ -1,7 +1,7 @@
 Event Title,Latitude,Longitude,Date,Audio,Photo,Marker
 Siemoi Borehole ,1.103842,37.512,20-01-2025, ,assets/photos/stables.jpg,assets/markers/borehole.png
 Koitaga Borehole ,1.102197,37.514025,20-01-2025,,assets/photos/stables.jpg,assets/markers/borehole.png
-Leitemu Borehole 1 ,1.099401,37.522257,20-01-2025,,assets/photos/stables.jpg,assets/markers/borehole.png
+Leitemu Borehole 1 ,1.0994,37.522257,20-01-2025,,assets/photos/stables.jpg,assets/markers/borehole.png
 Leitemu Borehole 2 ,1.103328,37.525706,20-01-2025,,assets/photos/stables.jpg,assets/markers/borehole.png
 Lolkonoi Singing Wells ,1.106975,37.529596,20-01-2025,assets/sounds/elephant-rampaging.wav,assets/photos/stables.jpg,assets/markers/well.png
 Leitemu Singing Wells ,1.108968,37.539404,20-01-2025,assets/sounds/elephant-rampaging.wav,assets/photos/sereolipi.jpg,assets/markers/well.png
